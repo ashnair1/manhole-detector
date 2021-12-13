@@ -2,46 +2,65 @@ import os
 import random
 
 import cv2
-from detectron2 import model_zoo
-from detectron2.config import get_cfg
+import torch
 from detectron2.data import MetadataCatalog
 from detectron2.engine import DefaultPredictor
 from detectron2.utils.visualizer import Visualizer
 
+from manhole_detector.cfg import setup_cfg
 from manhole_detector.dataset import (DATA_DIR, get_manhole_dicts,
                                       register_manholes)
 
 register_manholes()
 
 
-def main():
-    cfg = get_cfg()
-    cfg.merge_from_file(
-        model_zoo.get_config_file("COCO-Detection/faster_rcnn_R_50_FPN_3x.yaml")
-    )
-    cfg.DATASETS.TRAIN = ("manhole_train",)
-    cfg.DATASETS.TEST = ("manhole_val",)
-    cfg.DATALOADER.NUM_WORKERS = 2
+class BatchPredictor(DefaultPredictor):
+    """Run d2 on a list of images."""
 
-    cfg.SOLVER.IMS_PER_BATCH = 2
-    cfg.SOLVER.BASE_LR = 0.00025
-    cfg.SOLVER.MAX_ITER = 1000
-    cfg.SOLVER.STEPS = []  # do not decay learning rate
-    cfg.MODEL.ROI_HEADS.BATCH_SIZE_PER_IMAGE = (
-        128  # faster, and good enough for this toy dataset (default: 256)
-    )
-    cfg.MODEL.ROI_HEADS.NUM_CLASSES = 3
-    cfg.TEST.EVAL_PERIOD = 100
-    cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.7  # set a custom testing threshold
-    os.makedirs(cfg.OUTPUT_DIR, exist_ok=True)
+    def __call__(self, images):
+        """Run d2 on a list of images.
+
+        Args:
+            images (list): BGR images of the expected shape: 720x1280
+        """
+        images = [
+            {"image": torch.from_numpy(image.astype("float32").transpose(2, 0, 1))}
+            for image in images
+        ]
+        with torch.no_grad():
+            preds = self.model(images)
+        return preds
+
+
+def infer_dir(directory, out_dir=None):
+    cfg = setup_cfg()
     cfg.MODEL.WEIGHTS = os.path.join(
-        cfg.OUTPUT_DIR, "model_final.pth"
+        cfg.OUTPUT_DIR, "model_0004999.pth"
     )  # path to the model we just trained
+    manhole_metadata = MetadataCatalog.get("manhole_val")
+    predictor = DefaultPredictor(cfg)
+    out_dir = directory if not out_dir else out_dir
+    for img in os.listdir(directory):
+        imgpath = os.path.join(directory, img)
+        imgname = os.path.basename(img)
+        im = cv2.imread(imgpath)
+        out = predictor(im)
+        v = Visualizer(im[:, :, ::-1], metadata=manhole_metadata)
+        out = v.draw_instance_predictions(out["instances"].to("cpu"))
+        name, ext = os.path.splitext(img)
+        out_name = name + "_pred" + ext
+        out_path = os.path.join(out_dir, out_name)
+        cv2.imwrite(out_path, out.get_image()[:, :, ::-1])
+
+
+def infer_val():
+
+    cfg = setup_cfg()
     predictor = DefaultPredictor(cfg)
 
     dataset_dicts = get_manhole_dicts(DATA_DIR + "val")
     manhole_metadata = MetadataCatalog.get("manhole_val")
-    for d in random.sample(dataset_dicts, 3):
+    for d in random.sample(dataset_dicts, 50):
         im = cv2.imread(d["file_name"])
         outputs = predictor(
             im
@@ -63,4 +82,7 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    infer_dir(
+        "/media/ashwin/DATA2/manhole-detector/data/test",
+        "/media/ashwin/DATA2/manhole-detector/data/test_pred",
+    )
