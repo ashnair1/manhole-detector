@@ -31,6 +31,6 @@ docker build --build-arg USER_ID=$UID -t manhole:v0 .
 2. Mount volumes and run docker container
 
 ```
-docker run -it --rm --gpus all -v /path/to/data/:/home/appuser/workspace/data -v path/to/output/:/home/appuser/workspace/output manhole:v0 python manhole_detector/infer.py -i ./data/test -o ./data/test_pred/
+docker run --rm --gpus all -v /path/to/data/:/home/appuser/workspace/data -v path/to/output/:/home/appuser/workspace/output manhole:v0 python manhole_detector/infer.py -i ./data/test -o ./data/test_pred/
 ```
 
