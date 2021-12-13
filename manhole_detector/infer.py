@@ -1,8 +1,8 @@
+import argparse
 import os
 import random
 
 import cv2
-import torch
 from detectron2.data import MetadataCatalog
 from detectron2.engine import DefaultPredictor
 from detectron2.utils.visualizer import Visualizer
@@ -13,6 +13,11 @@ from manhole_detector.dataset import (DATA_DIR, get_manhole_dicts,
 
 register_manholes()
 
+def get_parser():
+    parser = argparse.ArgumentParser(description="Manhole Detector")
+    parser.add_argument("-i", "--input", help="Input image directory")
+    parser.add_argument("-o", "--output", help="Output image directory")
+    return parser
 
 def infer_dir(directory, out_dir=None):
     cfg = setup_cfg()
@@ -64,7 +69,7 @@ def infer_val():
 
 
 if __name__ == "__main__":
-    infer_dir(
-        "/media/ashwin/DATA2/manhole-detector/data/test",
-        "/media/ashwin/DATA2/manhole-detector/data/test_pred",
-    )
+    args = get_parser().parse_args()
+    assert os.path.isdir(args.input)
+    assert os.path.isdir(args.output)
+    infer_dir(args.input,args.output)
