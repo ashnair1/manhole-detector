@@ -14,24 +14,6 @@ from manhole_detector.dataset import (DATA_DIR, get_manhole_dicts,
 register_manholes()
 
 
-class BatchPredictor(DefaultPredictor):
-    """Run d2 on a list of images."""
-
-    def __call__(self, images):
-        """Run d2 on a list of images.
-
-        Args:
-            images (list): BGR images of the expected shape: 720x1280
-        """
-        images = [
-            {"image": torch.from_numpy(image.astype("float32").transpose(2, 0, 1))}
-            for image in images
-        ]
-        with torch.no_grad():
-            preds = self.model(images)
-        return preds
-
-
 def infer_dir(directory, out_dir=None):
     cfg = setup_cfg()
     cfg.MODEL.WEIGHTS = os.path.join(
