@@ -49,6 +49,9 @@ Assuming your test folder directory is as follows:
 where `test` contains test images and `test_pred` is the directory to save predictions.
 
 ```
-docker run --rm --gpus all -v /path/to/data/:/home/appuser/workspace/data -v path/to/output/:/home/appuser/workspace/output manhole:v1 python manhole_detector/infer.py -i ./data/test -o ./data/test_pred/
+docker run --rm --gpus all -v /path/to/data/:/home/appuser/workspace/data manhole:v1 python manhole_detector/infer.py -i ./data/test -o ./data/test_pred/
 ```
+**Note**: If you're building an image manually, you'll need to explicitly mount your checkpoint folder as well as the pre-built image comes with a checkpoint. Specify an additional volume mount via `-v path/to/output/:/home/appuser/workspace/output`
+
+
 
