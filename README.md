@@ -22,15 +22,24 @@ python manhole-detector/infer.py -i path/to/img/directory -o path/to/output/dire
 
 ### Docker
 
+You can either build the docker image manually or you could get the pre-built docker image
 
-1. Build docker image
+**Build manually**
 ```
-docker build --build-arg USER_ID=$UID -t manhole:v0 .
+git clone git@github.com:ashnair1/manhole-detector.git
+cd manhole_detector/
+docker build --build-arg USER_ID=$UID -t manhole:v1 .
 ```
 
-2. Mount volumes and run docker container
+**Pull pre-built image**
+```
+docker pull ash1995/manhole:v1
+```
+
+
+**Mount volumes and run docker container**
 
 ```
-docker run --rm --gpus all -v /path/to/data/:/home/appuser/workspace/data -v path/to/output/:/home/appuser/workspace/output manhole:v0 python manhole_detector/infer.py -i ./data/test -o ./data/test_pred/
+docker run --rm --gpus all -v /path/to/data/:/home/appuser/workspace/data -v path/to/output/:/home/appuser/workspace/output manhole:v1 python manhole_detector/infer.py -i ./data/test -o ./data/test_pred/
 ```
 
