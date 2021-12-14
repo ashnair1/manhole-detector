@@ -39,6 +39,15 @@ docker pull ash1995/manhole:v1
 
 **Mount volumes and run docker container**
 
+Assuming your test folder directory is as follows:
+```
+.
+└── data
+    ├── test
+    └── test_pred
+```
+where `test` contains test images and `test_pred` is the directory to save predictions.
+
 ```
 docker run --rm --gpus all -v /path/to/data/:/home/appuser/workspace/data -v path/to/output/:/home/appuser/workspace/output manhole:v1 python manhole_detector/infer.py -i ./data/test -o ./data/test_pred/
 ```
