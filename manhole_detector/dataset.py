@@ -60,7 +60,7 @@ def get_manhole_dicts(data_dir):
             ann = ins.split()
             cat = ann[0]
             bbox = ann[1:]
-            category = CATEGORIES[int(cat)]
+            # category = CATEGORIES[int(cat)]
             bbox_yolo = [float(i) for i in bbox]
 
             bbox = yolobbox2bbox(bbox_yolo, height, width)
@@ -96,7 +96,7 @@ if __name__ == "__main__":
     for d in random.sample(dataset_dicts, 5):
         img = cv2.imread(d["file_name"])
         print(f'Plotting {d["file_name"]}')
-        visualizer = Visualizer(img[:, :, ::-1], metadata=manhole_metadata, scale=0.5)
+        visualizer = Visualizer(img[:, :, ::-1], metadata=manhole_metadata, scale=1)
         out = visualizer.draw_dataset_dict(d)
 
         # plt.imshow(out.get_image())

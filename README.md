@@ -17,7 +17,7 @@ python manhole-detector/train.py
 ### Inference
 
 ```python
-python manhole-detector/infer.py -i path/to/img/directory -o path/to/output/directory
+python manhole-detector/infer.py -i path/to/img/directory -o path/to/output/directory -c path/to/checkpoint
 ```
 
 ### Docker
