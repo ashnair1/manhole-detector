@@ -14,7 +14,7 @@ def setup_cfg():
         "COCO-Detection/faster_rcnn_R_50_FPN_3x.yaml"
     )
     cfg.SOLVER.IMS_PER_BATCH = 2
-    cfg.SOLVER.BASE_LR = 0.00025
+    cfg.SOLVER.BASE_LR = 0.003
     cfg.SOLVER.MAX_ITER = 40000
     cfg.SOLVER.STEPS = []  # do not decay learning rate
     cfg.MODEL.ROI_HEADS.BATCH_SIZE_PER_IMAGE = (

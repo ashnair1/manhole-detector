@@ -14,6 +14,12 @@ Simple repo to show how [detectron2](https://github.com/facebookresearch/detectr
 python manhole-detector/train.py
 ```
 
+### Evaluate
+
+```python
+python manhole-detector/eval.py --ckpt path/to/checkpoint
+```
+
 ### Inference
 
 ```python

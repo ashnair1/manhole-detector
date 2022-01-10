@@ -8,8 +8,12 @@ from detectron2.engine import DefaultPredictor
 from detectron2.utils.visualizer import Visualizer
 
 from manhole_detector.cfg import setup_cfg
-from manhole_detector.dataset import (CATEGORIES, DATA_DIR, get_manhole_dicts,
-                                      register_manholes)
+from manhole_detector.dataset import (
+    CATEGORIES,
+    DATA_DIR,
+    get_manhole_dicts,
+    register_manholes,
+)
 
 register_manholes()
 
@@ -26,7 +30,7 @@ def infer_img(img, out_dir=None, ckpt_path=None):
     assert os.path.isfile(img)
     cfg = setup_cfg()
     if not ckpt_path:
-        ckpt_path = os.path.join(cfg.OUTPUT_DIR, "model_0004999.pth")
+        ckpt_path = os.path.join(cfg.OUTPUT_DIR, "model_final.pth")
 
     cfg.MODEL.WEIGHTS = ckpt_path
     if out_dir:
